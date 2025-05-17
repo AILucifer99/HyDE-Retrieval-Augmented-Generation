@@ -1,0 +1,132 @@
+flowchart TB
+    subgraph UI["Streamlit User Interface"]
+        upload[Upload Documents]
+        config[Configuration Settings]
+        question[Question Input]
+        answertab[Question Answering Tab]
+        history[History Tab]
+    end
+
+    subgraph Backend["HyDERAG Pipeline"]
+        initialize[Initialize HyDERAG]
+        
+        subgraph document_processing["Document Processing"]
+            load_doc[Load Document]
+            text_splitter[Text Splitter]
+            chunks[Create Chunks]
+        end
+        
+        subgraph embedding["Embedding Layer"]
+            direction LR
+            embed_provider{{"Embedding Provider"}}
+            google_embed[Google Embeddings]
+            openai_embed[OpenAI Embeddings]
+            embed_provider --> google_embed
+            embed_provider --> openai_embed
+        end
+        
+        subgraph retrieval["Retrieval System"]
+            vector_store[Vector Store]
+            retriever[Retriever]
+        end
+        
+        subgraph rag_pipeline["RAG Processing"]
+            direction TB
+            approach{{"Approach"}}
+            
+            subgraph hyde_approach["HyDE Approach"]
+                direction TB
+                hyde_llm{{"HyDE LLM Provider"}}
+                groq_hyde[Groq LLM]
+                openai_hyde[OpenAI LLM]
+                google_hyde[Google LLM]
+                
+                hyde_llm --> groq_hyde
+                hyde_llm --> openai_hyde
+                hyde_llm --> google_hyde
+                
+                hyp_doc[Generate Hypothetical Document]
+            end
+            
+            subgraph direct_approach["Direct Approach"]
+                direct_query[Direct Query]
+            end
+            
+            approach --> hyde_approach
+            approach --> direct_approach
+            
+            context_retrieval[Retrieve Context]
+            
+            subgraph answer_generation["Answer Generation"]
+                direction TB
+                answer_llm{{"Answer LLM Provider"}}
+                groq_answer[Groq LLM]
+                openai_answer[OpenAI LLM]
+                google_answer[Google LLM]
+                
+                answer_llm --> groq_answer
+                answer_llm --> openai_answer
+                answer_llm --> google_answer
+                
+                generate_answer[Generate Final Answer]
+            end
+        end
+
+        compare[Compare Approaches]
+    end
+
+    subgraph External["External Services"]
+        openai_api[OpenAI API]
+        google_api[Google API]
+        groq_api[Groq API]
+    end
+    
+    %% Main Flow Connections
+    upload --> load_doc
+    config --> initialize
+    
+    initialize --> Backend
+    
+    load_doc --> text_splitter
+    text_splitter --> chunks
+    chunks --> embed_provider
+    
+    google_embed & openai_embed --> vector_store
+    vector_store --> retriever
+    
+    question --> approach
+    
+    %% HyDE Flow
+    hyde_approach --> hyp_doc
+    hyp_doc --> embed_provider
+    hyp_doc -- "Embedded Question" --> retriever
+    
+    %% Direct Flow
+    direct_approach -- "Direct Question" --> retriever
+    
+    retriever --> context_retrieval
+    context_retrieval --> answer_llm
+    
+    groq_answer & openai_answer & google_answer --> generate_answer
+    
+    %% Compare Flow
+    question --> compare
+    compare --> hyde_approach & direct_approach
+    
+    %% External Services
+    Backend <--> openai_api & google_api & groq_api
+    
+    %% Output Connections
+    generate_answer --> answertab
+    answertab --> history
+    
+    %% Styles
+    classDef uiClass fill:#d0e0ff,stroke:#333,stroke-width:1px;
+    classDef providerClass fill:#ffe6cc,stroke:#333,stroke-width:1px;
+    classDef externalClass fill:#f9d0c4,stroke:#333,stroke-width:1px;
+    classDef processClass fill:#d5e8d4,stroke:#333,stroke-width:1px;
+    
+    class UI uiClass;
+    class embedding,retrieval,rag_pipeline,document_processing processClass;
+    class hyde_llm,embed_provider,answer_llm,approach providerClass;
+    class External externalClass;
