@@ -1,6 +1,6 @@
-# HyDERAG Streamlit Application
+# Hypothetical Document Embedding Retrieval Augemnted Generation - Multi-LLM System
 
-![HyDERAG Logo](https://via.placeholder.com/750x250?text=HyDERAG+-+Hypothetical+Document+Embeddings+RAG)
+![HyDE RAG Application](https://github.com/AILucifer99/HyDE-Retrieval-Augmented-Generation/blob/main/architecture/Home.png)
 
 ## Table of Contents
 - [Overview](#overview)
