@@ -1,4 +1,4 @@
-# Hypothetical Document Embedding Retrieval Augemnted Generation - Multi-LLM System
+# Hypothetical Document Embedding Retrieval Augmented Generation - Multi-LLM System
 
 Hypothetical Document Embedding Retrieval-Augmented Generation (RAG) – Multi-LLM System
 A scalable and modular GenAI framework that combines semantic document embedding with retrieval-augmented generation to enable context-rich, source-grounded responses across multiple domains. This system supports orchestration of multiple Large Language Models (LLMs) to optimize for accuracy, latency, and cost. Ideal for building intelligent assistants, enterprise knowledge bots, and hybrid QA systems. Features include custom chunking, vector search, multi-LLM routing, and configurable retrieval pipelines.
